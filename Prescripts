@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>THE INDEX - MESSENGER UNIT 4/5</title>
+<style>
+    :root { --paper: #d9d2c5; --ink: #1a1a1a; --index-blue: #4aa3ff; --seal-red: #8b0000; }
+    body { margin: 0; background: #000; display: flex; flex-direction: column; justify-content: center; align-items: center; height: 100vh; font-family: "Courier New", monospace; overflow: hidden; transition: background 0.5s ease; }
+    
+    /* The Messenger Alert Flash */
+    .messenger-flash { background: var(--index-blue) !important; }
+
+    #paper { width: 350px; min-height: 580px; background: var(--paper); border: 2px solid #111; padding: 35px; box-sizing: border-box; position: relative; transition: transform 0.1s ease; color: var(--ink); box-shadow: 0 0 40px rgba(0,0,0,0.9); }
+    .header { text-align: center; font-weight: 900; letter-spacing: 5px; border-bottom: 2px solid var(--ink); padding-bottom: 5px; }
+    #meta-data { font-size: 10px; display: flex; justify-content: space-between; margin: 10px 0 30px 0; color: #555; }
+    #text { font-size: 17px; font-weight: bold; line-height: 1.4; min-height: 180px; margin-bottom: 20px; text-transform: uppercase; }
+    #penalty-area { border-top: 1px dashed #999; padding-top: 15px; }
+    #seal { position: absolute; bottom: 80px; right: 30px; width: 90px; height: 90px; border: 3px double var(--seal-red); border-radius: 50%; display: none; color: var(--seal-red); font-size: 10px; font-weight: bold; align-items: center; justify-content: center; text-align: center; transform: rotate(-15deg); }
+    #proxy-info { position: absolute; bottom: 20px; left: 35px; font-size: 10px; font-weight: bold; }
+    .weaving { animation: shake 0.1s infinite; text-shadow: 2px 0px var(--index-blue); }
+    @keyframes shake { 0%{transform:translate(1px,0)} 50%{transform:translate(-1px,1px)} 100%{transform:translate(0,-1px)} }
+</style>
+</head>
+<body id="body">
+
+<div id="paper">
+    <div class="header">PRESCRIPT</div>
+    <div id="meta-data"><span id="day-display">...</span><span id="status-display">...</span></div>
+    <div id="text">AWAITING THE WILL...</div>
+    <div id="penalty-area">
+        <div id="penalty" style="font-size:11px; font-style:italic;"></div>
+    </div>
+    <div id="seal">THE INDEX<br>PROXIED</div>
+    <div id="proxy-info"></div>
+</div>
+
+<script>
+// Schedule based on Class 4/5 Semester 2/2568
+const SUBJECTS = {
+    1: ["อ30205", "ค31102", "พ31201", "BREAK", "อ31102", "อ30225", "จ31202", "ท31102"],
+    2: ["ว30283", "ว30283", "อ30225", "BREAK", "อ30224", "อ30205", "I30209", "I30209"],
+    3: ["อ31210", "อ30224", "ส31102", "BREAK", "พ31102", "ว30141", "ว30141", "ค31102", "อ31204"],
+    4: ["ง30101", "ง30101", "ท31102", "BREAK", "อ31210", "ส31102", "อ31102", "LEVEL MEETING", "IT SEARCH"],
+    5: ["อ31204", "ว30141", "ศ30101", "BREAK", "ค31102", "GUIDANCE", "CLUB", "อ30205", "อ31210"]
+};
+
+function triggerMessengerAlert() {
+    const body = document.getElementById('body');
+    body.classList.add('messenger-flash');
+    setTimeout(() => body.classList.remove('messenger-flash'), 400);
+}
+
+function weave() {
+    triggerMessengerAlert();
+    const now = new Date();
+    const day = now.getDay(); 
+    const hour = now.getHours();
+    const min = now.getMinutes();
+    const timeVal = hour + (min / 60);
+
+    // School range: 8:15 AM (8.25) to 4:10 PM (16.16)
+    const isSchool = (day >= 1 && day <= 5) && (timeVal >= 8.25 && timeVal <= 16.16);
+    
+    document.getElementById("day-display").textContent = ["SUN","MON (จ.)","TUE (อ.)","WED (พ.)","THU (พฤ.)","FRI (ศ.)","SAT"][day];
+    document.getElementById("seal").style.display = "none";
+
+    let mandate = "";
+    if (isSchool) {
+        document.getElementById("status-display").textContent = "STATUS: ENFORCING";
+        // Estimate period index based on ~50min classes
+        let pIndex = Math.floor((timeVal - 8.25) / 0.83); 
+        let sub = (SUBJECTS[day] && SUBJECTS[day][pIndex]) ? SUBJECTS[day][pIndex] : "THE CURRENT CLASS";
+        mandate = `DURING ${sub}, ${["DISCARD A PAGE OF NOTES", "STARE AT THE CLOCK", "REMAIN COMPLETELY SILENT"][Math.floor(Math.random()*3)]} UNTIL THE PERIOD ENDS.`;
+    } else {
+        document.getElementById("status-display").textContent = "STATUS: DORMANT";
+        mandate = `WHILE IN YOUR DWELLING, ${["OBSERVE THE NIGHT SKY", "INSCRIBE THE WILL ON A DOOR", "COUNT YOUR BREATHS"][Math.floor(Math.random()*3)]} ${["FOR 14 MINUTES", "BEFORE SLEEP", "WITHOUT LIGHT"][Math.floor(Math.random()*3)]}.`;
+    }
+
+    animate(mandate);
+}
+
+function animate(txt) {
+    const el = document.getElementById("text");
+    el.innerHTML = ""; el.classList.add("weaving");
+    let i = 0;
+    const itv = setInterval(() => {
+        if(i < txt.length) { el.innerHTML += txt[i++]; }
+        else { 
+            clearInterval(itv); el.classList.remove("weaving"); 
+            document.getElementById("penalty").textContent = "PUNISHMENT: TOTAL ERASURE OF IDENTITY.";
+            document.getElementById("seal").style.display = "flex";
+            document.getElementById("proxy-info").textContent = "PROXY: " + ["ESTHER","GLORIA","HUBERT"][Math.floor(Math.random()*3)];
+        }
+    }, 25);
+}
+
+document.body.addEventListener("mousedown", weave);
+weave();
+</script>
+</body>
+</html>
